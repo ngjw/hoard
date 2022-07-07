@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hoard"
+version = "0.1.0"
+authors = [
+  { name="Junwei Ng", email="ngjw89@gmail.com" },
+]
+description = "Hoard"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Linux",
+]
+
+dependencies = [
+  'redis',
+  'boto3',
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ngjw/hoard"
