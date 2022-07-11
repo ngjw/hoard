@@ -1,4 +1,5 @@
 import os
+import uuid
 import gzip
 import yaml
 import shutil
@@ -25,7 +26,7 @@ class BaseFSHoard(Hoard):
     @staticmethod
     def atomic_write(path, mode, open_func=open):
         path = Path(path)
-        tmp = path.parent / f'.{path.name}.tmp'
+        tmp = path.parent / f'.{path.name}.{uuid.uuid4()}.tmp'
         def _write(writer):
             writer(open_func(tmp, mode))
             os.rename(tmp, path)
