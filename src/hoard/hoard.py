@@ -38,7 +38,11 @@ class Hoard:
 
     @cached_property
     def serializer(self):
-        return Serializer.get('pickle')()
+        try:
+            serializer_type = self.serializer_type
+        except AttributeError:
+            serializer_type = 'pickle'
+        return Serializer.get(serializer_type)()
 
     def __setitem__(self, k, v):
         self.store_raw(k, self.serializer.as_stream(v))

@@ -4,7 +4,7 @@ from hoard.serialize import JSONer
 from hoard.serialize import BinarySerializer
 from hoard.serialize import TextSerializer
 
-def test_pickler():
+def test_serialize():
 
 
     def _test(serializer, x):

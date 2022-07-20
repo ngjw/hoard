@@ -36,22 +36,19 @@ class RedisHoard(Hoard):
         h = cls(redis_key, redis_kwargs)
         if remove_existing:
             h.delete()
+        else:
+            if h.redis.keys(redis_key):
+                raise ValueError(f'Key {redis_key} already exists')
         h.set_config('serializer', serializer)
         return h
 
     def delete(self):
         self.redis.delete(self.redis_key)
+        self.redis.delete(self.config_key)
 
     def keys(self):
         for k in self.redis.hkeys(self.redis_key):
             yield k.decode()
-
-    #def __setitem__(self, k, v):
-    #    return self.redis.hset(self.redis_key, k.encode(), self.serializer.serialize(v))
-
-    #def __getitem__(self, k):
-    #    b = self.redis.hget(self.redis_key, k.encode())
-    #    return self.serializer.unserialize(b)
 
     def load_raw(self, k):
         return io.BytesIO(self.redis.hget(self.redis_key, k.encode()))
@@ -84,6 +81,10 @@ class LRURedisHoard(RedisHoard, Cache):
         h = super(LRURedisHoard, cls).new(redis_key, redis_kwargs, remove_existing)
         if remove_existing:
             h.redis.delete(h.zkey)
+            h.redis.delete(h.config_key)
+        else:
+            if h.redis.keys(h.zkey):
+                raise ValueError(f'Key {h.zkey} already exists')
         h.set_config('maxsize', maxsize)
         h.set_config('serializer', serializer)
         return h

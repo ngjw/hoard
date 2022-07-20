@@ -11,7 +11,6 @@ from functools import cached_property
 
 from .hoard import Hoard
 from .cache import CachedHoard
-from .redis import RedisHoard
 from .serialize import Serializer
 
 
@@ -84,10 +83,6 @@ class BaseFSHoard(Hoard):
     def __contains__(self, k):
         p = self.get_path(k)
         return p.exists()
-
-    def redis_cached(self, redis_kwargs={}):
-        redis_key = str(self.root)
-        return CachedHoard(self, RedisHoard(redis_key, redis_kwargs))
 
     @contextlib.contextmanager
     def as_file(self, k, wd=None):

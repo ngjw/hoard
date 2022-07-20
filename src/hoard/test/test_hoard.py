@@ -47,10 +47,6 @@ def test_fshoard(tmpdir):
 
         _test_hoard(hoard / 'partition')
 
-        hoard = hoard_cls.new(tmpdir / 'hoard', remove_existing=True).redis_cached()
-        hoard.cache.delete()
-        _test_hoard(hoard)
-
         hoard = hoard_cls.new(tmpdir / 'hoard', remove_existing=True)
 
         keys = set()
@@ -64,6 +60,7 @@ def test_fshoard(tmpdir):
     _test(HashedFSHoard)
     _test(FSHoard)
 
+@pytest.mark.redis
 def test_redis_hoard():
 
     hoard = RedisHoard.new('hoard_test', remove_existing=True)
@@ -72,9 +69,10 @@ def test_redis_hoard():
     hoard = RedisHoard.new('hoard_test', remove_existing=True)
     _test_hoard(DictHoard.cache(hoard))
 
+@pytest.mark.redis
 def test_redis_lru_hoard():
 
-    hoard = LRURedisHoard.new('lru_hoard_test', maxsize=5)
+    hoard = LRURedisHoard.new('lru_hoard_test', maxsize=5, remove_existing=True)
 
     for k in map(str, range(10)):
         hoard[k] = k
@@ -85,11 +83,14 @@ def test_redis_lru_hoard():
 
 def test_cache(tmpdir):
 
-    base = RedisHoard.new('hoard_test', remove_existing=True)
-
+    base = FSHoard.new(tmpdir / 'hoard', remove_existing=True)
     _test_hoard(CachedHoard(base))
 
-    base = FSHoard.new(tmpdir / 'hoard', remove_existing=True)
+@pytest.mark.redis
+def test_redis_cache(tmpdir):
+
+    base = RedisHoard.new('hoard_test', remove_existing=True)
+
     _test_hoard(CachedHoard(base))
 
 def test_lru_cache(tmpdir):

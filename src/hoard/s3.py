@@ -11,9 +11,10 @@ class S3Hoard(Hoard):
 
     S3_LIST_MAX_KEYS = 1000
 
-    def __init__(self, bucket_name, partition='root'):
+    def __init__(self, bucket_name, partition='root', serializer='pickle'):
         self.bucket_name = bucket_name
         self.partition = partition
+        self.serializer_type = serialize
 
     @cached_property
     def s3client(self):
