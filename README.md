@@ -37,7 +37,7 @@ Stores data on a filesystem.
 
 #### Creation
 ```python
-FSHoard.new(path, compression=None, remove_existing=False, serializer='pickle)
+FSHoard.new(path, compression=None, remove_existing=False, serializer='pickle')
 ```
 *Parameters*
 - `path` - root path to storage directory
