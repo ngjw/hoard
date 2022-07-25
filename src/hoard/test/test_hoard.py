@@ -1,3 +1,4 @@
+import rsa
 import pytest
 import threading
 from math import inf
@@ -12,6 +13,7 @@ from hoard import HoardSet
 from hoard import CompositeHoard
 from hoard import HoardView
 from hoard import ReadOnlyHoard
+from hoard import SecretHoard
 from hoard.remote import RemoteHoardServer
 from hoard.remote import RemoteHoard
 
@@ -114,6 +116,18 @@ def test_lru_cache(tmpdir):
     for k in map(str, range(5, 10)):
         assert not k in h
         h[k]
+
+def test_secret_hoard():
+
+    b = DictHoard()
+    b.serializer_type = 'bytes'
+
+    pub, priv = rsa.newkeys(512)
+
+    h = SecretHoard(b, pub, priv, serializer='text')
+    h['foo'] = 'bar'
+    assert h['foo'] == 'bar'
+    assert rsa.decrypt(b['foo'], priv).decode() == 'bar'
 
 def test_remote_hoard():
 

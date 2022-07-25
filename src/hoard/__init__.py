@@ -10,3 +10,4 @@ from .remote import RemoteHoard
 from .composite import HoardSet
 from .composite import CompositeHoard
 from .view import HoardView
+from .secret import SecretHoard

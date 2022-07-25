@@ -21,6 +21,7 @@ classifiers = [
 dependencies = [
   'redis',
   'boto3',
+  'rsa',
 ]
 
 [project.urls]
