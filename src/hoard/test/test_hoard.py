@@ -244,3 +244,4 @@ def test_match_delete():
 
     assert not 'fox' in h
     assert not 'jumps' in h
+

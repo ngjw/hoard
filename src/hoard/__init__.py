@@ -11,3 +11,4 @@ from .composite import HoardSet
 from .composite import CompositeHoard
 from .view import HoardView
 from .secret import SecretHoard
+from .s3 import S3Hoard

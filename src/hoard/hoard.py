@@ -4,7 +4,7 @@ import tempfile
 import pathlib
 import contextlib
 from itertools import chain
-from functools import cached_property
+from functools import cached_property, wraps
 
 from .serialize import Serializer
 
@@ -65,11 +65,14 @@ class Hoard:
         for k in self.keys():
             yield self[k]
 
-    def get(self, key, default=None):
+    def get(self, key, default=None, getter=None):
         try:
             return self[key]
         except KeyError:
-            return default
+            if getter:
+                return getter(key)
+            else:
+                return default
 
     @contextlib.contextmanager
     def open(self, k, mode='r', *args, **kwargs):
@@ -109,6 +112,19 @@ class Hoard:
         self.siphon(other)
         other.siphon(self)
 
+    def cache_function(self, f):
+        """
+        Caches f in the hoard.
+        (f takes the key of the hoard as a single argument)
+        """
+        @wraps(f)
+        def wrapped(k):
+            try:
+                return self[k]
+            except KeyError:
+                self[k] = v = f(k)
+                return v
+        return wrapped
 
 class ReadOnlyHoard(Hoard):
 

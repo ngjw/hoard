@@ -14,7 +14,7 @@ class S3Hoard(Hoard):
     def __init__(self, bucket_name, partition='root', serializer='pickle'):
         self.bucket_name = bucket_name
         self.partition = partition
-        self.serializer_type = serialize
+        self.serializer_type = serializer
 
     @cached_property
     def s3client(self):
@@ -67,7 +67,12 @@ class S3Hoard(Hoard):
 
     def load_raw(self, k):
         stream = io.BytesIO()
-        self.s3client.download_fileobj(self.bucket_name, self.key(k), stream)
+        try:
+            self.s3client.download_fileobj(self.bucket_name, self.key(k), stream)
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                raise KeyError(k)
+            raise
         stream.seek(0)
         return stream
 
