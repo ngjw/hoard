@@ -1,5 +1,6 @@
 import rsa
 import pytest
+from dataclasses import dataclass
 import threading
 from math import inf
 from hoard import FSHoard
@@ -14,6 +15,7 @@ from hoard import CompositeHoard
 from hoard import HoardView
 from hoard import ReadOnlyHoard
 from hoard import SecretHoard
+from hoard import HoardItem
 from hoard.remote import RemoteHoardServer
 from hoard.remote import RemoteHoard
 
@@ -245,3 +247,31 @@ def test_match_delete():
     assert not 'fox' in h
     assert not 'jumps' in h
 
+def test_item():
+
+    h = DictHoard()
+
+    @dataclass
+    class TestItem(HoardItem):
+
+        HOARD = h
+        k1 : str
+        k2 : str
+
+        @property
+        def key(self):
+            return f'{self.k1},{self.k2}'
+
+    i = TestItem(1,2)
+
+    i.set(4)
+    assert i.get() == 4
+
+    @i.cache
+    def getter(k1, k2):
+        return k1 + k2
+
+    assert getter(1,2) == 4
+    assert not '2,2' in h
+    assert getter(2,2) == 4
+    assert '2,2' in h

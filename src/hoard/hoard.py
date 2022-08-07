@@ -112,20 +112,6 @@ class Hoard:
         self.siphon(other)
         other.siphon(self)
 
-    def cache_function(self, f):
-        """
-        Caches f in the hoard.
-        (f takes the key of the hoard as a single argument)
-        """
-        @wraps(f)
-        def wrapped(k):
-            try:
-                return self[k]
-            except KeyError:
-                self[k] = v = f(k)
-                return v
-        return wrapped
-
 class ReadOnlyHoard(Hoard):
 
     def __init__(self, base):
