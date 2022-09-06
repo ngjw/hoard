@@ -134,6 +134,8 @@ class FSHoard(BaseFSHoard):
 
     def keys(self):
         for f in Path(self.data_root).iterdir():
+            if f.name.startswith('.'):
+                continue
             yield self.decode_key(f.name)
 
 
@@ -184,4 +186,6 @@ class HashedFSHoard(BaseFSHoard):
             for f in files:
                 rp = os.path.relpath(os.path.join(root, f), self.data_root)
                 key = rp.split(os.path.sep, self.depth)[-1]
+                if key.startswith('.'):
+                    continue
                 yield self.decode_key(key)
